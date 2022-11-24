@@ -6,6 +6,7 @@ public class Reserva {
 	IUsuario usuario; 
 	IItemBiblioteca item; 
 	Date data; 
+	private boolean isAtivo; 
 
 	public IUsuario getUsuario() {
 		return usuario; 
@@ -15,5 +16,8 @@ public class Reserva {
 	}
 	public Date getData() {
 		return data; 
+	}
+	public boolean getIsAtivo() {
+		return isAtivo; 
 	}
 }
