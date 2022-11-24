@@ -20,11 +20,13 @@ public static Biblioteca getInstanciaBiblioteca() {
 }
 
 public void PegarLivroEmprestado(String codigoUsuario, String codigoLivro) {
-	IUsuario usuario = listaUsuarios.stream().filter(user->user.getCodigo().equals(codigoUsuario)).toList().get(0);
-	ILivro livro = listaLivros.stream().filter(liv->liv.getCodigo().equals(codigoLivro)).toList().get(0);
-	usuario.pegarLivroEmprestado(livro);
-	System.out.println(usuario.getNome());
-	System.out.println(livro.getAutor());
+	try {
+		IUsuario usuario = listaUsuarios.stream().filter(user->user.getCodigo().equals(codigoUsuario)).toList().get(0);
+		ILivro livro = listaLivros.stream().filter(liv->liv.getCodigo().equals(codigoLivro)).toList().get(0);
+		usuario.pegarLivroEmprestado(livro);
+	} catch (Exception e) {
+		System.out.println(e.getMessage());
+	}
 }
 
 
