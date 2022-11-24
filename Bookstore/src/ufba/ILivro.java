@@ -7,4 +7,6 @@ public String getAutor();
 public String getCodigoExemplar(); 
 public String getEdicao();
 public String getAnoPublicacao();
+public StatusEmprestimoLivro getStatus(); 
+public ReservaLivro getReservaAtiva(); 
 }

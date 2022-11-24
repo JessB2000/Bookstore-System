@@ -6,10 +6,10 @@ import java.util.List;
 public class Professor implements IUsuario, Observer {
 	private String nome; 
 	private String codigo; 
-	List<Reserva> listaReserva; 
-	List <Reserva> listaReservaAtiva;
-	List<Emprestimo> listaEmprestimo; 
-	List<Emprestimo> listaEmprestimoAtivo; 
+	List<ReservaLivro> listaReserva; 
+	List <ReservaLivro> listaReservaAtiva;
+	List<EmprestimoLivro> listaEmprestimo; 
+	List<EmprestimoLivro> listaEmprestimoAtivo; 
 	public Professor(String nome, String codigo) {
 		this.nome = nome; 
 		this.codigo=codigo; 
@@ -38,13 +38,13 @@ public class Professor implements IUsuario, Observer {
 	}
 
 	@Override
-	public List<Reserva> listarReservas() {
+	public List<ReservaLivro> listarReservas() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Emprestimo> listarEmprestimo() {
+	public List<EmprestimoLivro> listarEmprestimo() {
 		// TODO Auto-generated method stub
 		return null;
 	}

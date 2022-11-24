@@ -4,18 +4,17 @@ import java.util.Date;
 import java.util.List;
 
 public class Livro implements ILivro, Subject {
-
 	private String codigo;
 	private String codigoExemplar;
 	private String titulo;
 	private String autor;
 	private String edicao;
 	private String anopublicacao;
-	List<Reserva> listaReserva;
-	List<Reserva> listaReservaAtiva;
-	List<Emprestimo> listaEmprestimo;
-	List<Emprestimo> listaEmprestimoAtivo;
-	StatusEmprestimoLivro status = StatusEmprestimoLivro.Emprestado;
+	List<ReservaLivro> listaReserva;
+	ReservaLivro reservaAtiva;
+	List<EmprestimoLivro> listaEmprestimo;
+	List<EmprestimoLivro> listaEmprestimoAtivo;
+	StatusEmprestimoLivro status;
 	IUsuario locatario;
 
 	public Livro(String codigo, String titulo, String autor, String edicao, String anopublicacao,
@@ -26,8 +25,9 @@ public class Livro implements ILivro, Subject {
 		this.edicao = edicao;
 		this.anopublicacao = anopublicacao;
 		this.codigoExemplar = codigoExemplar;
+		this.status = StatusEmprestimoLivro.Livre; 
 	}
-
+    
 	@Override
 	public String getTitulo() {
 		return titulo;
@@ -121,6 +121,17 @@ public class Livro implements ILivro, Subject {
 		Livro livro = (Livro) obj;
 
 		return ((livro.getCodigoExemplar() == this.codigoExemplar) && (livro.getCodigoLivro().equals(this.codigo)));
+	}
+
+	@Override
+	public StatusEmprestimoLivro getStatus() {
+		// TODO Auto-generated method stub
+		return this.status;
+	}
+
+	@Override
+	public ReservaLivro getReservaAtiva() {
+		return reservaAtiva;
 	}
 
 	

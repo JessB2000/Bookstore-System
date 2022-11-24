@@ -22,8 +22,15 @@ public static Biblioteca getInstanciaBiblioteca() {
 public void PegarLivroEmprestado(String codigoUsuario, String codigoLivro) {
 	try {
 		IUsuario usuario = listaUsuarios.stream().filter(user->user.getCodigo().equals(codigoUsuario)).toList().get(0);
-		ILivro livro = listaLivros.stream().filter(liv->liv.getCodigoLivro().equals(codigoLivro)).toList().get(0);
-		usuario.pegarLivroEmprestado(livro);
+		List <ILivro> listaLivro = listaLivros.stream().filter(liv->(liv.getCodigoLivro().equals(codigoLivro))).toList();
+		List <ILivro> listaLivrosReservados = listaLivros.stream().filter(liv->liv.getStatus().equals(StatusEmprestimoLivro.Reservado)).toList();
+		List <ILivro> listaLivrosLivres = listaLivros.stream().filter(liv->liv.getStatus().equals(StatusEmprestimoLivro.Livre)).toList();
+	    
+		listaLivrosReservados.forEach(livro -> {
+			if(livro.getReservaAtiva().getUsuario().equals(usuario)) {
+			}
+		});
+		usuario.pegarLivroEmprestado(listalivro);
 	} catch (Exception e) {
 		System.out.println(e.getMessage());
 	}

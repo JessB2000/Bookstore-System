@@ -2,7 +2,7 @@ package ufba;
 
 import java.util.Date;
 
-public class Reserva {
+public class ReservaLivro {
 	private IUsuario usuario; 
 	private String codigoItem; 
 	private String codigoReserva;
