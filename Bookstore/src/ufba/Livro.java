@@ -103,7 +103,8 @@ public class Livro implements ILivro, Subject {
 
 	@Override
 	public void emprestarItem(IUsuario usuario) {
-		// TODO Auto-generated method stub
+		this.status = StatusEmprestimoLivro.Emprestado;
+		this.locatario = usuario;
 
 	}
 
