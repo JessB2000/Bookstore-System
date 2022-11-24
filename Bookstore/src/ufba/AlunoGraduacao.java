@@ -7,6 +7,7 @@ public class AlunoGraduacao implements IUsuario {
 private String nome; 
 private String codigo; 
 private int LIMITE_EMPRESTIMO = 3;
+private boolean isDevedor;
 List<Reserva> listaReserva; 
 List <Reserva> listaReservaAtiva; 
 List<Emprestimo> listaEmprestimo; 
