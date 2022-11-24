@@ -1,6 +1,7 @@
 package ufba;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class AlunoPosGraduacao implements IUsuario {
@@ -52,7 +53,9 @@ public class AlunoPosGraduacao implements IUsuario {
 	public String getCodigo() {
 		return codigo;
 	}
-
+	private boolean isDevedor() {
+		return this.listaEmprestimoAtivo.stream().anyMatch(emprestimo ->emprestimo.dataDevolucaoPrevista.after(new Date()));
+	}
 	@Override
 	public String getNome() {
 		return nome;
