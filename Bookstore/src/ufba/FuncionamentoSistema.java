@@ -3,6 +3,9 @@ package ufba;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Predicate;
+
+import javax.lang.model.type.NullType;
 
 public class FuncionamentoSistema {
 
@@ -14,15 +17,10 @@ public class FuncionamentoSistema {
         biblioteca.listaLivros.add(livro); 
         biblioteca.PegarLivroEmprestado("452", "888");  
         List<String> list = new ArrayList<>();
-        String va = "adc";
-  
-        list.add(va);
-        System.out.println(list);
-        List<String> l = list.stream().filter(p -> p.equals("adc")).toList();
+        NullType SEM_RESERVA = null;
+    
         
-        System.out.println(l.size());
-
-       System.out.println(list);
+      
 	}
 
 }

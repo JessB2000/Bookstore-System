@@ -7,14 +7,14 @@ import java.util.List;
 public class AlunoPosGraduacao implements IUsuario {
 	private String nome; 
 	private String codigo; 
-	List<ReservaLivro> listaReserva; 
+	List<ReservaLivro> listaReservaHistorico; 
 	List <ReservaLivro> listaReservaAtiva;
 	List<EmprestimoLivro> listaEmprestimo; 
 	List<EmprestimoLivro> listaEmprestimoAtivo; 
 	public AlunoPosGraduacao(String nome, String codigo) {
 		this.nome = nome; 
 		this.codigo=codigo; 
-		this.listaReserva = new ArrayList<>();
+		this.listaReservaHistorico = new ArrayList<>();
 		this.listaReservaAtiva = new ArrayList<>();
 		this.listaEmprestimo = new ArrayList<>(); 
 		this.listaEmprestimoAtivo  = new ArrayList<>(); 
@@ -60,5 +60,13 @@ public class AlunoPosGraduacao implements IUsuario {
 	public String getNome() {
 		return nome;
 	}
-
+	
+	public void removerReservaAtiva(ILivro livro) {
+		listaReservaAtiva.removeIf(reserva -> reserva.getLivro().equals(livro));
+	}
+	
+	public void adicionarReservaHistorico(ReservaLivro reserva) {
+		listaReservaAtiva.add(reserva);
+	}
+	
 }

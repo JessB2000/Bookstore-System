@@ -6,14 +6,14 @@ import java.util.List;
 public class Professor implements IUsuario, Observer {
 	private String nome; 
 	private String codigo; 
-	List<ReservaLivro> listaReserva; 
+	List<ReservaLivro> listaReservaHistorico; 
 	List <ReservaLivro> listaReservaAtiva;
 	List<EmprestimoLivro> listaEmprestimo; 
 	List<EmprestimoLivro> listaEmprestimoAtivo; 
 	public Professor(String nome, String codigo) {
 		this.nome = nome; 
 		this.codigo=codigo; 
-		this.listaReserva = new ArrayList<>();
+		this.listaReservaHistorico = new ArrayList<>();
 		this.listaReservaAtiva = new ArrayList<>();
 		this.listaEmprestimo = new ArrayList<>(); 
 		this.listaEmprestimoAtivo  = new ArrayList<>(); 
@@ -64,5 +64,13 @@ public class Professor implements IUsuario, Observer {
 		// TODO Auto-generated method stub
 		
 	}
+	public void removerReservaAtiva(ILivro livro) {
+		listaReservaAtiva.removeIf(reserva -> reserva.getLivro().equals(livro));
+	}
+	
+	public void adicionarReservaHistorico(ReservaLivro reserva) {
+		listaReservaAtiva.add(reserva);
+	}
+	
 
 }

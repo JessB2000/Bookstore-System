@@ -1,6 +1,6 @@
 package ufba;
 
-import java.util.Date;
+
 import java.util.List;
 
 public class Livro implements ILivro, Subject {
@@ -18,7 +18,7 @@ public class Livro implements ILivro, Subject {
 	IUsuario locatario;
 
 	public Livro(String codigo, String titulo, String autor, String edicao, String anopublicacao,
-			String codigoExemplar) {
+		String codigoExemplar) {
 		this.codigo = codigo;
 		this.titulo = titulo;
 		this.autor = autor;
@@ -97,15 +97,29 @@ public class Livro implements ILivro, Subject {
 
 	@Override
 	public void reservarItem(IUsuario usuario) {
-		// TODO Auto-generated method stub
+		ReservaLivro reserva = new ReservaLivro();
+		
 
 	}
 
 	@Override
 	public void emprestarItem(IUsuario usuario) {
-		this.status = StatusEmprestimoLivro.Emprestado;
-		this.locatario = usuario;
-
+		this.status = StatusEmprestimoLivro.Emprestado;		
+		if(reservaAtiva!= null &&  reservaAtiva.getUsuario().equals(usuario)) {
+			usuario.adicionarReservaHistorico(this.reservaAtiva);
+			this.reservaAtiva.setIsAtivo(false);
+			usuario.removerReservaAtiva(this);
+		}else if(reservaAtiva == null || !reservaAtiva.getUsuario().equals(usuario)) {
+			reservaAtiva.getUsuario().removerReservaAtiva(this);
+			this.reservaAtiva.setIsAtivo(false);
+		}
+	}
+	
+	public void desativarReserva() {
+		ReservaLivro reserva = new ReservaLivro();
+		reserva = reservaAtiva;
+		this.listaReserva.add(reserva);
+		this.reservaAtiva=null;
 	}
 
 	@Override

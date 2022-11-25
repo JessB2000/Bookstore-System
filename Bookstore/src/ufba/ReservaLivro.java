@@ -1,34 +1,47 @@
 package ufba;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class ReservaLivro {
 	private IUsuario usuario; 
-	private String codigoItem; 
-	private String codigoReserva;
-	private Date data; 
+	private static int geradorReserva = 17;
+	private int codigoReserva;
+	private ILivro livro;
+	private LocalDate data; 
 	private boolean isAtivo; 
+	
+	public ReservaLivro() {
+		
+	}
+	public ReservaLivro(IUsuario usuario,ILivro livro) {
+			this.usuario = usuario;
+			this.livro = livro;
+			this.data = LocalDate.now();
+			this.codigoReserva = ++geradorReserva;
+			this.isAtivo=true;
+	}
+	
 
 	public IUsuario getUsuario() {
 		return usuario; 
 	}
 	
-	public Date getData() {
+	public LocalDate getData() {
 		return data; 
 	}
 	public boolean getIsAtivo() {
 		return isAtivo; 
 	}
 	
-	public String getCodigoItem() {
-		return this.codigoItem;
+	public int getCodigoReserva() {
+		return this.codigoReserva;
 	}
 	
 	public void setIsAtivo(boolean value) {
 		this.isAtivo = value;
 	}
 	
-	public String getCodigoReserva() {
-		return this.codigoReserva;
+	public ILivro getLivro() {
+		return livro;
 	}
 }
