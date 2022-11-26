@@ -1,6 +1,7 @@
 package entidades;
 
 
+import java.time.LocalDate;
 import java.util.List;
 
 import interfaces.ILivro;
@@ -20,7 +21,7 @@ public class Livro implements ILivro, Subject {
 	List<ReservaLivro> listaReserva;
 	ReservaLivro reservaAtiva;
 	List<EmprestimoLivro> listaEmprestimo;
-	List<EmprestimoLivro> listaEmprestimoAtivo;
+	EmprestimoLivro EmprestimoAtivo;
 	StatusEmprestimoLivro status;
 	IUsuario locatario;
 
@@ -93,9 +94,12 @@ public class Livro implements ILivro, Subject {
 	
 	
 	@Override
-	public void devolverItem() {
-		// TODO Auto-generated method stub
-
+	public void devolverItem(IUsuario usuario, ILivro livro, EmprestimoLivro emprestimo) {
+		this.locatario = null; 
+		this.status = StatusEmprestimoLivro.Livre; 
+	    this.listaEmprestimo.add(emprestimo); 
+        this.EmprestimoAtivo = null; 
+        
 	}
 
 	public String getCodigoExemplar() {
@@ -110,15 +114,17 @@ public class Livro implements ILivro, Subject {
 	}
 
 	@Override
-	public void emprestarItem(IUsuario usuario) {
+	public void emprestarItem(IUsuario usuario, EmprestimoLivro emprestimo) {
 		this.status = StatusEmprestimoLivro.Emprestado;		
-		if(reservaAtiva!= null &&  reservaAtiva.getUsuario().equals(usuario)) {
+		if(reservaAtiva.getUsuario().equals(usuario)) {
 			usuario.adicionarReservaHistorico(this.reservaAtiva);
-			this.reservaAtiva.setIsAtivo(false);
 			usuario.removerReservaAtiva(this);
+			this.locatario = usuario; 
+			this.EmprestimoAtivo = emprestimo; 
 		}else if(reservaAtiva == null || !reservaAtiva.getUsuario().equals(usuario)) {
 			reservaAtiva.getUsuario().removerReservaAtiva(this);
-			this.reservaAtiva.setIsAtivo(false);
+			this.locatario = usuario; 
+			this.EmprestimoAtivo = emprestimo;
 		}
 	}
 	

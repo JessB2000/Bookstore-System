@@ -56,12 +56,13 @@ public class AlunoGraduacao implements IUsuario {
 	
 		if (reserva == SEM_RESERVA) { 
 			ILivro livroEmprestar = livros_livres_and_reservados.stream().filter(Status_Livre).toList().get(0);
-			livroEmprestar.emprestarItem(this);
-			listaEmprestimoAtivo.add(new EmprestimoLivro(this, livro, LocalDate.now(), LocalDate.now().plusDays(PRAZO_DEVOLUCAO)));
+			EmprestimoLivro emprestimo  = new EmprestimoLivro(this, livro, LocalDate.now(), LocalDate.now().plusDays(PRAZO_DEVOLUCAO));
+			livroEmprestar.emprestarItem(this, emprestimo);
+			listaEmprestimoAtivo.add(emprestimo);
 		} else {
-			reserva.getLivro().emprestarItem(this);
-			listaEmprestimoAtivo.add(new EmprestimoLivro(this, livro, LocalDate.now(), LocalDate.now().plusDays(PRAZO_DEVOLUCAO)));
-		}
+			EmprestimoLivro emprestimo  = new EmprestimoLivro(this, livro, LocalDate.now(), LocalDate.now().plusDays(PRAZO_DEVOLUCAO));
+			reserva.getLivro().emprestarItem(this, emprestimo);
+			listaEmprestimoAtivo.add(emprestimo);		}
 	}
 
 	public void removerReservaAtiva(ILivro livro) {
@@ -69,10 +70,9 @@ public class AlunoGraduacao implements IUsuario {
 	}
 	
 	public void adicionarReservaHistorico(ReservaLivro reserva) {
-		listaReservaAtiva.add(reserva);
+		reserva.setIsAtivo(false);
+		listaReservaHistorico.add(reserva);
 	}
-	
-	
 	public ReservaLivro obterReserva (ILivro livro) {
 		
 	List<ReservaLivro> reservas = listaReservaAtiva.stream().filter(reserva -> reserva.getLivro().equals(livro)).toList();
@@ -106,12 +106,12 @@ public class AlunoGraduacao implements IUsuario {
 	}
 
 	@Override
-	public void devolverLivro(ILivro livro) {
-		livro.devolverItem();
+	public void devolverLivro(ILivro livro) {	
 		EmprestimoLivro emprestimo = obterEmprestimoAtivo(livro);
 		emprestimo.setDataDevolucaoReal(LocalDate.now());
 		listaEmprestimo.add(emprestimo);
 		listaEmprestimoAtivo.remove(emprestimo);
+		livro.devolverItem(this,livro, emprestimo);
 	}
 
 	@Override
