@@ -1,7 +1,10 @@
-package ufba;
+package outros;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import interfaces.ILivro;
+import interfaces.IUsuario;
 
 public class Biblioteca {
 List<IUsuario> listaUsuarios;
@@ -11,6 +14,9 @@ private Biblioteca() {
 	this.listaUsuarios = new ArrayList<IUsuario>();
 	this.listaLivros = new ArrayList<ILivro>();
 }
+
+
+
 
 public static Biblioteca getInstanciaBiblioteca() {
 	if(instanciaBiblioteca==null) {

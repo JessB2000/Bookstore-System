@@ -1,23 +1,28 @@
-package ufba;
+package entidades;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Professor implements IUsuario, Observer {
+import interfaces.ILivro;
+import interfaces.IUsuario;
+import outros.EmprestimoLivro;
+import outros.ReservaLivro;
+
+public class AlunoPosGraduacao implements IUsuario {
 	private String nome; 
 	private String codigo; 
 	List<ReservaLivro> listaReservaHistorico; 
 	List <ReservaLivro> listaReservaAtiva;
 	List<EmprestimoLivro> listaEmprestimo; 
 	List<EmprestimoLivro> listaEmprestimoAtivo; 
-	public Professor(String nome, String codigo) {
+	public AlunoPosGraduacao(String nome, String codigo) {
 		this.nome = nome; 
 		this.codigo=codigo; 
 		this.listaReservaHistorico = new ArrayList<>();
 		this.listaReservaAtiva = new ArrayList<>();
 		this.listaEmprestimo = new ArrayList<>(); 
 		this.listaEmprestimoAtivo  = new ArrayList<>(); 
-		
 	}
 	@Override
 	public void pegarLivroEmprestado(ILivro livro) {
@@ -53,17 +58,14 @@ public class Professor implements IUsuario, Observer {
 	public String getCodigo() {
 		return codigo;
 	}
-
+	private boolean isDevedor() {
+		return this.listaEmprestimoAtivo.stream().anyMatch(emprestimo ->emprestimo.getDataDevolucaoPrevista().isBefore(LocalDate.now()));
+	}
 	@Override
 	public String getNome() {
 		return nome;
 	}
-
-	@Override
-	public void update() {
-		// TODO Auto-generated method stub
-		
-	}
+	
 	public void removerReservaAtiva(ILivro livro) {
 		listaReservaAtiva.removeIf(reserva -> reserva.getLivro().equals(livro));
 	}
@@ -72,5 +74,4 @@ public class Professor implements IUsuario, Observer {
 		listaReservaAtiva.add(reserva);
 	}
 	
-
 }

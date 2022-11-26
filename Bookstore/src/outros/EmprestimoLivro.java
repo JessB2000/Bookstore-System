@@ -1,16 +1,19 @@
-package ufba;
+package outros;
 
 import java.time.LocalDate;
+
+import interfaces.ILivro;
+import interfaces.IUsuario;
 
 public class EmprestimoLivro {
 	private static int geradorCodigoEmprestimo = 11;
 	private int codigoEmprestimo;
-	IUsuario usuario; 
-	ILivro livro; 
+	private IUsuario usuario; 
+	private ILivro livro; 
 	private boolean isAtivo; 
-	LocalDate dataEmprestimo; 
-	LocalDate dataDevolucaoPrevista;
-	LocalDate dataDevolucaoReal;
+	private LocalDate dataEmprestimo; 
+	private LocalDate dataDevolucaoPrevista;
+	private LocalDate dataDevolucaoReal;
 	
 public EmprestimoLivro(IUsuario usuario, ILivro livro, LocalDate dataEmprestimo, LocalDate dataDevolucaoPrevista) {
 		super();
@@ -21,6 +24,7 @@ public EmprestimoLivro(IUsuario usuario, ILivro livro, LocalDate dataEmprestimo,
 		this.isAtivo = true; 
 		this.codigoEmprestimo = ++geradorCodigoEmprestimo;
 	}
+
 public IUsuario getUsuario() {
 	return usuario; 
 }
@@ -42,6 +46,10 @@ public boolean getIsAtivo() {
 
 public int getCodigoEmprestimo() {
 	return this.codigoEmprestimo;
+}
+
+public void setDataDevolucaoReal(LocalDate data) {
+	this.dataDevolucaoReal = data;
 }
 
 @Override

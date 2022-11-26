@@ -1,7 +1,14 @@
-package ufba;
+package entidades;
 
 
 import java.util.List;
+
+import interfaces.ILivro;
+import interfaces.IUsuario;
+import outros.EmprestimoLivro;
+import outros.ReservaLivro;
+import outros.StatusEmprestimoLivro;
+import outros.Subject;
 
 public class Livro implements ILivro, Subject {
 	private String codigo;

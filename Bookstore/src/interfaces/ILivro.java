@@ -1,4 +1,7 @@
-package ufba;
+package interfaces;
+
+import outros.ReservaLivro;
+import outros.StatusEmprestimoLivro;
 
 public interface ILivro  {
 	public String getHistoricoEmprestimo();

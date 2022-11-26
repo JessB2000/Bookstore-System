@@ -1,4 +1,4 @@
-package ufba;
+package entidades;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -6,6 +6,13 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import javax.lang.model.type.NullType;
+
+import interfaces.ILivro;
+import interfaces.IUsuario;
+import outros.Biblioteca;
+import outros.EmprestimoLivro;
+import outros.ReservaLivro;
+import outros.StatusEmprestimoLivro;
 
 public class AlunoGraduacao implements IUsuario {
 	private String nome;
@@ -77,7 +84,7 @@ public class AlunoGraduacao implements IUsuario {
 	
 	public EmprestimoLivro obterEmprestimoAtivo(ILivro livro) {
 		
-		List<EmprestimoLivro> emprestimos = listaEmprestimoAtivo.stream().filter(emprestimo -> emprestimo.livro.equals(livro)).toList();
+		List<EmprestimoLivro> emprestimos = listaEmprestimoAtivo.stream().filter(emprestimo -> emprestimo.getLivro().equals(livro)).toList();
 		if(emprestimos.size()>0) {
 			return emprestimos.get(0);
 		}
@@ -87,7 +94,7 @@ public class AlunoGraduacao implements IUsuario {
 	@Override
 	public void reservarLivro(ILivro livro) throws Exception {
 		List<ILivro> livros_livres = Biblioteca.getInstanciaBiblioteca().
-				listaLivros.stream().filter(liv-> liv.getStatus().
+				getListaLivros().stream().filter(liv-> liv.getStatus().
 				equals(StatusEmprestimoLivro.Livre)&& liv.getCodigoLivro().equals(livro.getCodigoLivro())).toList();
 		
 		if(livros_livres.size()>0) {
@@ -102,7 +109,7 @@ public class AlunoGraduacao implements IUsuario {
 	public void devolverLivro(ILivro livro) {
 		livro.devolverItem();
 		EmprestimoLivro emprestimo = obterEmprestimoAtivo(livro);
-		emprestimo.dataDevolucaoReal = LocalDate.now();
+		emprestimo.setDataDevolucaoReal(LocalDate.now());
 		listaEmprestimo.add(emprestimo);
 		listaEmprestimoAtivo.remove(emprestimo);
 	}
@@ -124,19 +131,38 @@ public class AlunoGraduacao implements IUsuario {
 		return list;
 	}
 
-	@Override
-	public String getCodigo() {
-		return codigo;
-	}
-
 	private boolean isDevedor() {
 		return this.listaEmprestimoAtivo.stream()
-				.anyMatch(emprestimo -> emprestimo.dataDevolucaoPrevista.isBefore(LocalDate.now()));
+				.anyMatch(emprestimo -> emprestimo.getDataDevolucaoPrevista().isBefore(LocalDate.now()));
 	}
 
+	
 	@Override
 	public String getNome() {
 		return nome;
 	}
+
+	public List<ReservaLivro> getListaReservaHistorico() {
+		return listaReservaHistorico;
+	}
+
+	public List<ReservaLivro> getListaReservaAtiva() {
+		return listaReservaAtiva;
+	}
+
+	public List<EmprestimoLivro> getListaEmprestimo() {
+		return listaEmprestimo;
+	}
+
+	public List<EmprestimoLivro> getListaEmprestimoAtivo() {
+		return listaEmprestimoAtivo;
+	}
+
+	@Override
+	public String getCodigo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

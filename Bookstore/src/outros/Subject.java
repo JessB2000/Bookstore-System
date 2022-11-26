@@ -1,4 +1,4 @@
-package ufba;
+package outros;
 
 public interface Subject {
 public void addObserver();

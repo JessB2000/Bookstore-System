@@ -1,6 +1,9 @@
-package ufba;
+package outros;
 
 import java.time.LocalDate;
+
+import interfaces.ILivro;
+import interfaces.IUsuario;
 
 public class ReservaLivro {
 	private IUsuario usuario; 

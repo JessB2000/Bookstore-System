@@ -1,4 +1,4 @@
-package ufba;
+package interfaces;
 
 public interface IItemBiblioteca {
 

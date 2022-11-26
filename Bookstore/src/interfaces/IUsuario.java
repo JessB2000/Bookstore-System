@@ -1,6 +1,9 @@
-package ufba;
+package interfaces;
 
 import java.util.List;
+
+import outros.EmprestimoLivro;
+import outros.ReservaLivro;
 
 public interface IUsuario {
 public void pegarLivroEmprestado(ILivro livro) throws Exception;
