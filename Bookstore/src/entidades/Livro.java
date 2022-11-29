@@ -75,15 +75,13 @@ public class Livro implements ILivro, Subject {
 	}
 
 	@Override
-	public String getHistoricoEmprestimo() {
-		// TODO Auto-generated method stub
-		return null;
+	public List <EmprestimoLivro> getHistoricoEmprestimo() {
+		return listaEmprestimo;
 	}
 
 	@Override
-	public String getLocatario(IUsuario usuario) {
-		// TODO Auto-generated method stub
-		return null;
+	public IUsuario getLocatario(IUsuario usuario) {
+		return locatario;
 	}
 
 	@Override
@@ -107,10 +105,9 @@ public class Livro implements ILivro, Subject {
 	}
 
 	@Override
-	public void reservarItem(IUsuario usuario) {
-		ReservaLivro reserva = new ReservaLivro();
-		
-
+	public void reservarItem(IUsuario usuario, ReservaLivro reserva) {
+		this.reservaAtiva = reserva; 
+		this.status = StatusEmprestimoLivro.Reservado; 
 	}
 
 	@Override
@@ -126,13 +123,6 @@ public class Livro implements ILivro, Subject {
 			this.locatario = usuario; 
 			this.EmprestimoAtivo = emprestimo;
 		}
-	}
-	
-	public void desativarReserva() {
-		ReservaLivro reserva = new ReservaLivro();
-		reserva = reservaAtiva;
-		this.listaReserva.add(reserva);
-		this.reservaAtiva=null;
 	}
 
 	@Override
@@ -153,7 +143,6 @@ public class Livro implements ILivro, Subject {
 
 	@Override
 	public StatusEmprestimoLivro getStatus() {
-		// TODO Auto-generated method stub
 		return this.status;
 	}
 

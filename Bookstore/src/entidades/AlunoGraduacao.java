@@ -18,6 +18,7 @@ public class AlunoGraduacao implements IUsuario {
 	private String nome;
 	private String codigo;
 	private int LIMITE_EMPRESTIMO = 3;
+	private int LIMITE_RESERVA = 3; 
 	private int PRAZO_DEVOLUCAO = 3;
 	private List<ReservaLivro> listaReservaHistorico;
 	private List<ReservaLivro> listaReservaAtiva;
@@ -44,7 +45,11 @@ public class AlunoGraduacao implements IUsuario {
 		if (this.isDevedor()) {
 			throw new Exception("USUARIO ESTÁ EM DIVIDA COM A BIBLIOTECA");
 		}
-
+		
+		if (this.listaEmprestimoAtivo.stream().anyMatch(emp -> emp.getLivro().getCodigoLivro().equals(livro.getCodigoLivro())))
+		{
+			throw new Exception ("USUARIO JÁ POSSUI EMPRÉSTIMO DESSE LIVRO");
+		}
 		Biblioteca biblioteca = Biblioteca.getInstanciaBiblioteca();
 		
 		List<ILivro> livros_livres_and_reservados = biblioteca.getListaLivros().stream()
@@ -93,12 +98,25 @@ public class AlunoGraduacao implements IUsuario {
 	
 	@Override
 	public void reservarLivro(ILivro livro) throws Exception {
+		if (listaReservaAtiva.size() >= LIMITE_RESERVA) {
+			throw new Exception("LIMITE DE RESERVA EXECIDO");
+		}
+		if (this.isDevedor()) {
+			throw new Exception("USUARIO ESTÁ EM DIVIDA COM A BIBLIOTECA");
+		}
+		
+		if (this.listaReservaAtiva.stream().anyMatch(res -> res.getLivro().getCodigoLivro().equals(livro.getCodigoLivro())))
+		{
+			throw new Exception ("USUARIO JÁ POSSUI RESERVA DESSE LIVRO");
+		}
 		List<ILivro> livros_livres = Biblioteca.getInstanciaBiblioteca().
 				getListaLivros().stream().filter(liv-> liv.getStatus().
 				equals(StatusEmprestimoLivro.Livre)&& liv.getCodigoLivro().equals(livro.getCodigoLivro())).toList();
-		
 		if(livros_livres.size()>0) {
-			livros_livres.get(0).reservarItem(this);
+			ILivro exemplar = livros_livres.get(0); 
+			ReservaLivro reserva = new ReservaLivro(this, exemplar);
+			exemplar.reservarItem(this,reserva);
+			this.listaReservaAtiva.add(reserva); 
 		}else {
 			throw new Exception("NÃO HÁ EXEMPLARES DISPONÍVEIS PARA RESERVA!");
 		}
@@ -160,8 +178,7 @@ public class AlunoGraduacao implements IUsuario {
 
 	@Override
 	public String getCodigo() {
-		// TODO Auto-generated method stub
-		return null;
+		return codigo;
 	}
 
 
