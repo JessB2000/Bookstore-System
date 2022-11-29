@@ -18,12 +18,12 @@ public class Livro implements ILivro, Subject {
 	private String autor;
 	private String edicao;
 	private String anopublicacao;
-	List<ReservaLivro> listaReserva;
-	ReservaLivro reservaAtiva;
-	List<EmprestimoLivro> listaEmprestimo;
-	EmprestimoLivro EmprestimoAtivo;
-	StatusEmprestimoLivro status;
-	IUsuario locatario;
+	private List<ReservaLivro> listaReserva;
+	private ReservaLivro reservaAtiva;
+	private List<EmprestimoLivro> listaEmprestimo;
+	private EmprestimoLivro EmprestimoAtivo;
+	private StatusEmprestimoLivro status;
+	private IUsuario locatario;
 
 	public Livro(String codigo, String titulo, String autor, String edicao, String anopublicacao,
 		String codigoExemplar) {

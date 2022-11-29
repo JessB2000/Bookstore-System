@@ -1,7 +1,6 @@
 package comand;
 
 public interface comand {
-	
-	
-	public void execute();
+
+	public void execute(String[] args);
 }

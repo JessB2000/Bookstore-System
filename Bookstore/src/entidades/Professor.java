@@ -20,7 +20,7 @@ public class Professor implements IUsuario, Observer {
 	private String codigo;
 	private int LIMITE_EMPRESTIMOP = 4;
 	private int LIMITE_RESERVAP = 3; 
-	private int PRAZO_DEVOLUCAOP = 4;
+	private int PRAZO_DEVOLUCAOP = 7;
 	private List<ReservaLivro> listaReservaHistorico;
 	private List<ReservaLivro> listaReservaAtiva;
 	private List<EmprestimoLivro> listaEmprestimo;
