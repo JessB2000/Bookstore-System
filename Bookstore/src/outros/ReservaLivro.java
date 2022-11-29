@@ -12,10 +12,6 @@ public class ReservaLivro {
 	private ILivro livro;
 	private LocalDate data; 
 	private boolean isAtivo; 
-	
-	public ReservaLivro() {
-		
-	}
 	public ReservaLivro(IUsuario usuario,ILivro livro) {
 			this.usuario = usuario;
 			this.livro = livro;

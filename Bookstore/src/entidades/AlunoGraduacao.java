@@ -18,6 +18,7 @@ public class AlunoGraduacao implements IUsuario {
 	private String nome;
 	private String codigo;
 	private int LIMITE_EMPRESTIMO = 3;
+	private int LIMITE_RESERVA = 3; 
 	private int PRAZO_DEVOLUCAO = 3;
 	private List<ReservaLivro> listaReservaHistorico;
 	private List<ReservaLivro> listaReservaAtiva;
@@ -44,7 +45,11 @@ public class AlunoGraduacao implements IUsuario {
 		if (this.isDevedor()) {
 			throw new Exception("USUARIO ESTÁ EM DIVIDA COM A BIBLIOTECA");
 		}
-
+		
+		if (this.listaEmprestimoAtivo.stream().anyMatch(emp -> emp.getLivro().getCodigoLivro().equals(livro.getCodigoLivro())))
+		{
+			throw new Exception ("USUARIO JÁ POSSUI EMPRÉSTIMO DESSE LIVRO");
+		}
 		Biblioteca biblioteca = Biblioteca.getInstanciaBiblioteca();
 		
 		List<ILivro> livros_livres_and_reservados = biblioteca.getListaLivros().stream()
@@ -56,12 +61,13 @@ public class AlunoGraduacao implements IUsuario {
 	
 		if (reserva == SEM_RESERVA) { 
 			ILivro livroEmprestar = livros_livres_and_reservados.stream().filter(Status_Livre).toList().get(0);
-			livroEmprestar.emprestarItem(this);
-			listaEmprestimoAtivo.add(new EmprestimoLivro(this, livro, LocalDate.now(), LocalDate.now().plusDays(PRAZO_DEVOLUCAO)));
+			EmprestimoLivro emprestimo  = new EmprestimoLivro(this, livro, LocalDate.now(), LocalDate.now().plusDays(PRAZO_DEVOLUCAO));
+			livroEmprestar.emprestarItem(this, emprestimo);
+			listaEmprestimoAtivo.add(emprestimo);
 		} else {
-			reserva.getLivro().emprestarItem(this);
-			listaEmprestimoAtivo.add(new EmprestimoLivro(this, livro, LocalDate.now(), LocalDate.now().plusDays(PRAZO_DEVOLUCAO)));
-		}
+			EmprestimoLivro emprestimo  = new EmprestimoLivro(this, livro, LocalDate.now(), LocalDate.now().plusDays(PRAZO_DEVOLUCAO));
+			reserva.getLivro().emprestarItem(this, emprestimo);
+			listaEmprestimoAtivo.add(emprestimo);		}
 	}
 
 	public void removerReservaAtiva(ILivro livro) {
@@ -69,10 +75,9 @@ public class AlunoGraduacao implements IUsuario {
 	}
 	
 	public void adicionarReservaHistorico(ReservaLivro reserva) {
-		listaReservaAtiva.add(reserva);
+		reserva.setIsAtivo(false);
+		listaReservaHistorico.add(reserva);
 	}
-	
-	
 	public ReservaLivro obterReserva (ILivro livro) {
 		
 	List<ReservaLivro> reservas = listaReservaAtiva.stream().filter(reserva -> reserva.getLivro().equals(livro)).toList();
@@ -93,12 +98,25 @@ public class AlunoGraduacao implements IUsuario {
 	
 	@Override
 	public void reservarLivro(ILivro livro) throws Exception {
+		if (listaReservaAtiva.size() >= LIMITE_RESERVA) {
+			throw new Exception("LIMITE DE RESERVA EXECIDO");
+		}
+		if (this.isDevedor()) {
+			throw new Exception("USUARIO ESTÁ EM DIVIDA COM A BIBLIOTECA");
+		}
+		
+		if (this.listaReservaAtiva.stream().anyMatch(res -> res.getLivro().getCodigoLivro().equals(livro.getCodigoLivro())))
+		{
+			throw new Exception ("USUARIO JÁ POSSUI RESERVA DESSE LIVRO");
+		}
 		List<ILivro> livros_livres = Biblioteca.getInstanciaBiblioteca().
 				getListaLivros().stream().filter(liv-> liv.getStatus().
 				equals(StatusEmprestimoLivro.Livre)&& liv.getCodigoLivro().equals(livro.getCodigoLivro())).toList();
-		
 		if(livros_livres.size()>0) {
-			livros_livres.get(0).reservarItem(this);
+			ILivro exemplar = livros_livres.get(0); 
+			ReservaLivro reserva = new ReservaLivro(this, exemplar);
+			exemplar.reservarItem(this,reserva);
+			this.listaReservaAtiva.add(reserva); 
 		}else {
 			throw new Exception("NÃO HÁ EXEMPLARES DISPONÍVEIS PARA RESERVA!");
 		}
@@ -106,12 +124,12 @@ public class AlunoGraduacao implements IUsuario {
 	}
 
 	@Override
-	public void devolverLivro(ILivro livro) {
-		livro.devolverItem();
+	public void devolverLivro(ILivro livro) {	
 		EmprestimoLivro emprestimo = obterEmprestimoAtivo(livro);
 		emprestimo.setDataDevolucaoReal(LocalDate.now());
 		listaEmprestimo.add(emprestimo);
 		listaEmprestimoAtivo.remove(emprestimo);
+		livro.devolverItem(this,livro, emprestimo);
 	}
 
 	@Override
@@ -142,26 +160,10 @@ public class AlunoGraduacao implements IUsuario {
 		return nome;
 	}
 
-	public List<ReservaLivro> getListaReservaHistorico() {
-		return listaReservaHistorico;
-	}
-
-	public List<ReservaLivro> getListaReservaAtiva() {
-		return listaReservaAtiva;
-	}
-
-	public List<EmprestimoLivro> getListaEmprestimo() {
-		return listaEmprestimo;
-	}
-
-	public List<EmprestimoLivro> getListaEmprestimoAtivo() {
-		return listaEmprestimoAtivo;
-	}
 
 	@Override
 	public String getCodigo() {
-		// TODO Auto-generated method stub
-		return null;
+		return codigo;
 	}
 
 
