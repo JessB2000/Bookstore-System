@@ -160,21 +160,6 @@ public class AlunoGraduacao implements IUsuario {
 		return nome;
 	}
 
-	public List<ReservaLivro> getListaReservaHistorico() {
-		return listaReservaHistorico;
-	}
-
-	public List<ReservaLivro> getListaReservaAtiva() {
-		return listaReservaAtiva;
-	}
-
-	public List<EmprestimoLivro> getListaEmprestimo() {
-		return listaEmprestimo;
-	}
-
-	public List<EmprestimoLivro> getListaEmprestimoAtivo() {
-		return listaEmprestimoAtivo;
-	}
 
 	@Override
 	public String getCodigo() {

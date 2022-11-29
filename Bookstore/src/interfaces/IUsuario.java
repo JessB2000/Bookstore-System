@@ -15,4 +15,6 @@ public String getCodigo();
 public String getNome();
 public void removerReservaAtiva(ILivro livro);
 public void adicionarReservaHistorico(ReservaLivro reserva);
+public ReservaLivro obterReserva(ILivro livro); 
+public EmprestimoLivro obterEmprestimoAtivo(ILivro livro); 
 }
