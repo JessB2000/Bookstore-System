@@ -17,9 +17,9 @@ import outros.StatusEmprestimoLivro;
 public class AlunoPosGraduacao implements IUsuario {
 	private String nome;
 	private String codigo;
-	private int LIMITE_EMPRESTIMOPG = 4;
-	private int LIMITE_RESERVAPG = 3; 
-	private int PRAZO_DEVOLUCAOPG = 4;
+	private int LIMITE_EMPRESTIMO = 4;
+	private int LIMITE_RESERVA = 3; 
+	private int PRAZO_DEVOLUCAO = 4;
 	private List<ReservaLivro> listaReservaHistorico;
 	private List<ReservaLivro> listaReservaAtiva;
 	private List<EmprestimoLivro> listaEmprestimo;
@@ -34,38 +34,41 @@ public class AlunoPosGraduacao implements IUsuario {
 		this.listaEmprestimoAtivo = new ArrayList<>();
 	}
 	@Override
-	public void pegarLivroEmprestado(ILivro livro) throws Exception {
+	public void pegarLivroEmprestado(String codigoLivro) throws Exception {
 		
-		if (listaEmprestimoAtivo.size() >= LIMITE_EMPRESTIMOPG) {
+		if (listaEmprestimoAtivo.size() >= LIMITE_EMPRESTIMO) {
 			throw new Exception("LIMITE DE EMPRESTIMO EXECIDO");
 		}
 		if (this.isDevedor()) {
 			throw new Exception("USUARIO ESTÁ EM DIVIDA COM A BIBLIOTECA");
 		}
 		
-		if (this.listaEmprestimoAtivo.stream().anyMatch(emp -> emp.getLivro().getCodigoLivro().equals(livro.getCodigoLivro())))
+		if (this.listaEmprestimoAtivo.stream().anyMatch(emp -> emp.getLivro().getCodigoLivro().equals(codigoLivro)))
 		{
 			throw new Exception ("USUARIO JÁ POSSUI EMPRÉSTIMO DESSE LIVRO");
 		}
 		Biblioteca biblioteca = Biblioteca.getInstanciaBiblioteca();
 		
 		List<ILivro> livros_livres_and_reservados = biblioteca.getListaLivros().stream()
-				.filter(liv -> (liv.getCodigoLivro().equals(livro.getCodigoLivro()))).toList();
+				.filter(liv -> (liv.getCodigoLivro().equals(codigoLivro))).toList();
 		
 		Predicate<ILivro> Status_Livre = (l) -> l.getStatus().equals(StatusEmprestimoLivro.Livre);
 	
-		ReservaLivro reserva = obterReserva(livro);
+		ReservaLivro reserva = obterReserva(codigoLivro);
 	
 		if (reserva == SEM_RESERVA) { 
-			ILivro livroEmprestar = livros_livres_and_reservados.stream().filter(Status_Livre).toList().get(0);
-			EmprestimoLivro emprestimo  = new EmprestimoLivro(this, livro, LocalDate.now(), LocalDate.now().plusDays(PRAZO_DEVOLUCAOPG));
-			livroEmprestar.emprestarItem(this, emprestimo);
+			List <ILivro> livrosEmprestar = livros_livres_and_reservados.stream().filter(Status_Livre).toList();
+			
+			if (livrosEmprestar.size() <= 0) {
+				throw new Exception ("NÃO HÁ LIVROS DISPONÍVEIS");
+			}
+			EmprestimoLivro emprestimo  = new EmprestimoLivro(this, livrosEmprestar.get(0), LocalDate.now(), LocalDate.now().plusDays(PRAZO_DEVOLUCAO));
+			livrosEmprestar.get(0).emprestarItem(this, emprestimo);
 			listaEmprestimoAtivo.add(emprestimo);
 		} else {
-			EmprestimoLivro emprestimo  = new EmprestimoLivro(this, livro, LocalDate.now(), LocalDate.now().plusDays(PRAZO_DEVOLUCAOPG));
+			EmprestimoLivro emprestimo  = new EmprestimoLivro(this, reserva.getLivro(), LocalDate.now(), LocalDate.now().plusDays(PRAZO_DEVOLUCAO));
 			reserva.getLivro().emprestarItem(this, emprestimo);
 			listaEmprestimoAtivo.add(emprestimo);		}
-		
 	}
 	
 	public void removerReservaAtiva(ILivro livro) {
@@ -77,13 +80,15 @@ public class AlunoPosGraduacao implements IUsuario {
 		listaReservaHistorico.add(reserva);
 	}
 
-	public ReservaLivro obterReserva (ILivro livro) {
+	public ReservaLivro obterReserva (String codigoLivro) {
 		
-		List<ReservaLivro> reservas = listaReservaAtiva.stream().filter(reserva -> reserva.getLivro().equals(livro)).toList();
-			if(reservas.size()>0) {
-				return reservas.get(0);
-			}
-			return null;	
+		List<ReservaLivro> reservas = listaReservaAtiva.stream().filter(reserva -> reserva.getLivro().getCodigoLivro().equals(codigoLivro))
+				.toList();
+		if (reservas.size() > 0) {
+			return reservas.get(0);
+		}
+		return null;
+		
 		} 
 	
     public EmprestimoLivro obterEmprestimoAtivo(ILivro livro) {
@@ -97,7 +102,7 @@ public class AlunoPosGraduacao implements IUsuario {
 
 	@Override
 	public void reservarLivro(ILivro livro) throws Exception {
-		if (listaReservaAtiva.size() >= LIMITE_RESERVAPG) {
+		if (listaReservaAtiva.size() >= LIMITE_RESERVA) {
 			throw new Exception("LIMITE DE RESERVA EXECIDO");
 		}
 		if (this.isDevedor()) {
