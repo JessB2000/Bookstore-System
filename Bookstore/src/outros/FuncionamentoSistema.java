@@ -49,8 +49,8 @@ public class FuncionamentoSistema {
 		
 		Biblioteca.getInstanciaBiblioteca().getListaLivros()
 		.add(new Livro("11","Harry Potter 1","JK","2010","2020"));
-		Biblioteca.getInstanciaBiblioteca().getListaUsuarios()
-		.add(new Professor("ÍCARO", "245"));
+		Biblioteca.getInstanciaBiblioteca().getListaUsuarios().
+		add(new Professor("ÍCARO", "245"));
 	}
 	
 	

@@ -1,11 +1,12 @@
 package comand;
 
+import outros.Biblioteca;
+
 public class ReservarLivroCommand implements Command {
 
 	@Override
 	public void execute(String[] args) {
-		// TODO Auto-generated method stub
-		
+		Biblioteca.getInstanciaBiblioteca().reservarLivro(args[1], args[2]);
 	}
 
 }

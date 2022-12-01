@@ -15,6 +15,7 @@ import outros.ReservaLivro;
 import outros.StatusEmprestimoLivro;
 
 public class AlunoPosGraduacao implements IUsuario {
+	
 	private String nome;
 	private String codigo;
 	private int LIMITE_EMPRESTIMO = 4;
@@ -25,6 +26,7 @@ public class AlunoPosGraduacao implements IUsuario {
 	private List<EmprestimoLivro> listaEmprestimo;
 	private List<EmprestimoLivro> listaEmprestimoAtivo;
 	private NullType SEM_RESERVA = null;
+	
 	public AlunoPosGraduacao(String nome, String codigo) {
 		this.nome = nome;
 		this.codigo = codigo;
@@ -33,6 +35,49 @@ public class AlunoPosGraduacao implements IUsuario {
 		this.listaEmprestimo = new ArrayList<>();
 		this.listaEmprestimoAtivo = new ArrayList<>();
 	}
+	
+	//// ----------- GETTES E SETTERS
+	
+	@Override
+	public String getNome() {
+		return nome;
+	}
+
+	@Override
+	public String getCodigo() {
+		return codigo;
+	}
+	
+	@Override
+	public List<EmprestimoLivro> getEmprestimosHistorico() {
+		
+		return this.listaEmprestimo;
+	}
+
+
+	@Override
+	public List<ReservaLivro> getReservasHistorico() {
+	
+		return this.listaReservaHistorico;
+	}
+
+
+	@Override
+	public List<EmprestimoLivro> getEmprestimosAtivos() {
+		
+		return this.listaEmprestimoAtivo;
+	}
+
+
+	@Override
+	public List<ReservaLivro> getReservasAtivas() {
+		
+		return this.listaReservaAtiva;
+	}
+
+	
+	///// FUNÇÕES PRINCIPAIS
+
 	@Override
 	public void pegarLivroEmprestado(String codigoLivro) throws Exception {
 
@@ -56,18 +101,88 @@ public class AlunoPosGraduacao implements IUsuario {
 				throw new Exception("NÃO HÁ LIVROS DISPONÍVEIS");
 			}
 
-			ILivro livro = livros_livres.get(0);
+			addEmprestimo(livros_livres.get(0));
 
-			EmprestimoLivro emprestimo = new EmprestimoLivro(this, livro, LocalDate.now(),
-					LocalDate.now().plusDays(PRAZO_DEVOLUCAO));
-			livro.emprestarItem(this, emprestimo);
-			listaEmprestimoAtivo.add(emprestimo);
 		} else {
-			EmprestimoLivro emprestimo = new EmprestimoLivro(this, reserva.getLivro(), LocalDate.now(),
-					LocalDate.now().plusDays(PRAZO_DEVOLUCAO));
-			reserva.getLivro().emprestarItem(this, emprestimo);
-			listaEmprestimoAtivo.add(emprestimo);
+			addEmprestimo(reserva.getLivro());
 		}
+
+	}
+
+	@Override
+	public void reservarLivro(String Codigolivro) throws Exception {
+
+		if (listaReservaAtiva.size() >= LIMITE_RESERVA) {
+			throw new Exception("LIMITE DE RESERVA EXECIDO");
+		}
+		if (this.isDevedor()) {
+			throw new Exception("USUARIO ESTÁ EM DIVIDA COM A BIBLIOTECA");
+		}
+		if (this.listaReservaAtiva.stream().anyMatch(res -> res.getLivro().getCodigoLivro().equals(Codigolivro))) {
+			throw new Exception("USUARIO JÁ POSSUI RESERVA DESSE LIVRO");
+		}
+
+		List<ILivro> livros_livres = getLivrosLivresAndCodigo(Codigolivro);
+
+		if (livros_livres.size() > 0) {
+			addReserva(livros_livres.get(0));
+		} else {
+			throw new Exception("NÃO HÁ EXEMPLARES DISPONÍVEIS PARA RESERVA!");
+		}
+
+	}
+
+	@Override
+	public void devolverLivro(String codigoLivro) {
+		EmprestimoLivro emprestimo = obterEmprestimoAtivo(codigoLivro);
+		emprestimo.setDataDevolucaoReal(LocalDate.now());
+		listaEmprestimo.add(emprestimo);
+		listaEmprestimoAtivo.remove(emprestimo);
+		emprestimo.getLivro().devolverItem(this, emprestimo.getLivro(), emprestimo);
+	}
+	
+	public void removerReservaAtiva(ILivro livro) {
+		listaReservaAtiva.removeIf(reserva -> reserva.getLivro().equals(livro));
+	}
+	
+	public void adicionarReservaHistorico(ReservaLivro reserva) {
+		reserva.setIsAtivo(false);
+		listaReservaHistorico.add(reserva);
+	}
+
+	/// METODOS ACESSORIOS--------------------------------
+
+	private void addEmprestimo(ILivro livro) {
+		EmprestimoLivro emprestimo = new EmprestimoLivro(this, livro, LocalDate.now(),
+				LocalDate.now().plusDays(PRAZO_DEVOLUCAO));
+		livro.emprestarItem(this, emprestimo);
+		listaEmprestimoAtivo.add(emprestimo);
+	}
+
+	private void addReserva(ILivro exemplar) {
+		ReservaLivro reserva = new ReservaLivro(this, exemplar);
+		exemplar.reservarItem(this, reserva);
+		this.listaReservaAtiva.add(reserva);
+	}
+
+	private ReservaLivro obterReserva(String codigoLivro) {
+
+		List<ReservaLivro> reservas = listaReservaAtiva.stream()
+				.filter(reserva -> reserva.getLivro().getCodigoLivro().equals(codigoLivro)).toList();
+		if (reservas.size() > 0) {
+			return reservas.get(0);
+		}
+		return null;
+	}
+
+	private EmprestimoLivro obterEmprestimoAtivo(String codigoLivro) {
+
+		List<EmprestimoLivro> emprestimos = listaEmprestimoAtivo.stream()
+				.filter(emprestimo -> emprestimo.getLivro().getCodigoLivro().equals(codigoLivro)).toList();
+		if (emprestimos.size() > 0) {
+			return emprestimos.get(0);
+		}
+		return null;
 	}
 
 	private List<ILivro> getLivrosLivresAndCodigo(String codigo) {
@@ -77,98 +192,13 @@ public class AlunoPosGraduacao implements IUsuario {
 				.toList();
 
 	}
-	public void removerReservaAtiva(ILivro livro) {
-		listaReservaAtiva.removeIf(reserva -> reserva.getLivro().equals(livro));
-		}
-	
-	public void adicionarReservaHistorico(ReservaLivro reserva) {
-		reserva.setIsAtivo(false);
-		listaReservaHistorico.add(reserva);
-	}
 
-	public ReservaLivro obterReserva (String codigoLivro) {
-		
-		List<ReservaLivro> reservas = listaReservaAtiva.stream().filter(reserva -> reserva.getLivro().getCodigoLivro().equals(codigoLivro))
-				.toList();
-		if (reservas.size() > 0) {
-			return reservas.get(0);
-		}
-		return null;
-		
-		} 
-	
-    public EmprestimoLivro obterEmprestimoAtivo(ILivro livro) {
-		
-		List<EmprestimoLivro> emprestimos = listaEmprestimoAtivo.stream().filter(emprestimo -> emprestimo.getLivro().equals(livro)).toList();
-		if(emprestimos.size()>0) {
-			return emprestimos.get(0);
-		}
-		return null;
-	}
-
-	@Override
-	public void reservarLivro(ILivro livro) throws Exception {
-		if (listaReservaAtiva.size() >= LIMITE_RESERVA) {
-			throw new Exception("LIMITE DE RESERVA EXECIDO");
-		}
-		if (this.isDevedor()) {
-			throw new Exception("USUARIO ESTÁ EM DIVIDA COM A BIBLIOTECA");
-		}
-		
-		if (this.listaReservaAtiva.stream().anyMatch(res -> res.getLivro().getCodigoLivro().equals(livro.getCodigoLivro())))
-		{
-			throw new Exception ("USUARIO JÁ POSSUI RESERVA DESSE LIVRO");
-		}
-		List<ILivro> livros_livres = Biblioteca.getInstanciaBiblioteca().
-				getListaLivros().stream().filter(liv-> liv.getStatus().
-				equals(StatusEmprestimoLivro.Livre)&& liv.getCodigoLivro().equals(livro.getCodigoLivro())).toList();
-		if(livros_livres.size()>0) {
-			ILivro exemplar = livros_livres.get(0); 
-			ReservaLivro reserva = new ReservaLivro(this, exemplar);
-			exemplar.reservarItem(this,reserva);
-			this.listaReservaAtiva.add(reserva); 
-		}else {
-			throw new Exception("NÃO HÁ EXEMPLARES DISPONÍVEIS PARA RESERVA!");
-		}
-		
-	}
-
-	@Override
-	public void devolverLivro(ILivro livro) {
-		EmprestimoLivro emprestimo = obterEmprestimoAtivo(livro);
-		emprestimo.setDataDevolucaoReal(LocalDate.now());
-		listaEmprestimo.add(emprestimo);
-		listaEmprestimoAtivo.remove(emprestimo);
-		livro.devolverItem(this,livro, emprestimo);
-		
-	}
-
-	@Override
-	public List<ReservaLivro> listarReservas() {
-		List<ReservaLivro> list = new ArrayList<>();
-		list.addAll(listaReservaHistorico);
-		list.addAll(listaReservaAtiva);
-		return list;
-	}
-
-	@Override
-	public List<EmprestimoLivro> listarEmprestimo() {
-		List<EmprestimoLivro> list = new ArrayList<>();
-		list.addAll(listaEmprestimo);
-		list.addAll(listaEmprestimoAtivo);
-		return list;
-	}
 	private boolean isDevedor() {
 		return this.listaEmprestimoAtivo.stream()
 				.anyMatch(emprestimo -> emprestimo.getDataDevolucaoPrevista().isBefore(LocalDate.now()));
 	}
-	@Override
-	public String getCodigo() {
-		return codigo;
-	}
-	@Override
-	public String getNome() {
-		return nome;
-	}
+
+
 	
+
 }

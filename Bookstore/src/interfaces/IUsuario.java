@@ -6,14 +6,27 @@ import outros.EmprestimoLivro;
 import outros.ReservaLivro;
 
 public interface IUsuario {
-public void pegarLivroEmprestado(String codigoLivro) throws Exception;
-public void reservarLivro(ILivro livro) throws Exception; 
-public void devolverLivro(ILivro livro); 
-public List<ReservaLivro> listarReservas();
-public List<EmprestimoLivro> listarEmprestimo();  
-public String getCodigo();
-public String getNome();
-public void removerReservaAtiva(ILivro livro);
-public void adicionarReservaHistorico(ReservaLivro reserva); 
-public EmprestimoLivro obterEmprestimoAtivo(ILivro livro); 
+	
+	public void pegarLivroEmprestado(String codigoLivro) throws Exception;
+
+	public void reservarLivro(String CodigoLivro) throws Exception;
+
+	public void devolverLivro(String Codigolivro);
+
+	public String getCodigo();
+
+	public String getNome();
+	
+	public List<EmprestimoLivro> getEmprestimosHistorico();
+	
+	public List<ReservaLivro> getReservasHistorico();
+	
+	public List<EmprestimoLivro> getEmprestimosAtivos();
+	
+	public List<ReservaLivro> getReservasAtivas();
+	
+	public void removerReservaAtiva(ILivro livro);
+
+	public void adicionarReservaHistorico(ReservaLivro reserva);
+
 }

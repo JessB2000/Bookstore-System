@@ -118,7 +118,7 @@ public class Livro implements ILivro, Subject {
 	@Override
 	public void emprestarItem(IUsuario usuario, EmprestimoLivro emprestimo) {
 		this.status = StatusEmprestimoLivro.Emprestado;	
-		
+			
 		if(reservaAtiva!= null && reservaAtiva.getUsuario().equals(usuario)) {
 		
 			if(this.reservaAtiva!= null) {
@@ -130,10 +130,10 @@ public class Livro implements ILivro, Subject {
 			this.EmprestimoAtivo = emprestimo; 
 		}else if(reservaAtiva == null || !reservaAtiva.getUsuario().equals(usuario)) {
 			
-		
 			this.locatario = usuario; 
 			this.EmprestimoAtivo = emprestimo;
 		}
+		
 	}
 
 	@Override
@@ -169,20 +169,21 @@ public class Livro implements ILivro, Subject {
 		
 		String reservaView = "";
 		String emprestimoView = "";
+	
 		if(this.listaReserva.size()<=0) {
 			reservaView = "SEM RESERVA";
 		}else {
 			for(int i=0; i< this.listaReserva.size();i++) {
-				reservaView.concat("\n"+this.listaReserva.get(i).getUsuario().getNome());
+				reservaView = reservaView.concat("\n"+this.listaReserva.get(i).getUsuario().getNome());
 			}
 		}
 		
 		if(this.reservaAtiva!=null) {
-			reservaView.concat("\n"+this.reservaAtiva.getUsuario().getNome());
+			reservaView = reservaView.concat("\n"+this.reservaAtiva.getUsuario().getNome());
 		}
 		
 		if(this.EmprestimoAtivo!=null) {
-			emprestimoView.concat("\nEmprestimo Ativo:  || Usuario: "+this.EmprestimoAtivo.getUsuario().getNome()+
+			emprestimoView= emprestimoView.concat("\nEmprestimo Ativo:  || Usuario: "+this.EmprestimoAtivo.getUsuario().getNome()+
 					"   || Data Emprestimo: "+this.EmprestimoAtivo.getDataEmprestimo()+
 					"   || Data Devolução: "+this.EmprestimoAtivo.getDataDevolucaoPrevista());
 		}
