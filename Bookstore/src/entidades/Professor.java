@@ -46,32 +46,32 @@ public class Professor implements IUsuario, Observer {
 				.anyMatch(emp -> emp.getLivro().getCodigoLivro().equals(codigoLivro))) {
 			throw new Exception("USUARIO JÁ POSSUI EMPRÉSTIMO DESSE LIVRO");
 		}
+		
 		Biblioteca biblioteca = Biblioteca.getInstanciaBiblioteca();
 
-		List<ILivro> livros_livres_and_reservados = biblioteca.getListaLivros().stream()
-				.filter(liv -> (liv.getCodigoLivro().equals(codigoLivro))).toList();
-
-		Predicate<ILivro> Status_Livre = (l) -> l.getStatus().equals(StatusEmprestimoLivro.Livre);
-		Predicate<ILivro> Status_Reservado = (l) -> l.getStatus().equals(StatusEmprestimoLivro.Reservado);
 		ReservaLivro reserva = obterReserva(codigoLivro);
+		List<ILivro> livros_livres = getLivrosLivresAndCodigo(codigoLivro);
 
 		if (reserva == SEM_RESERVA) {
-			List<ILivro> livrosEmprestar = livros_livres_and_reservados.stream().filter(Status_Livre).toList();
-
-			if (livrosEmprestar.size() <= 0) {
-				List<ILivro> livrosReservados = livros_livres_and_reservados.stream().filter(Status_Reservado).toList();
-
+			
+			if (livros_livres.size() <= 0) {
+				
+				List<ILivro> livrosReservados = getLivrosRevervadosAndCodigo(codigoLivro);
 				if (livrosReservados.size() <= 0) {
 					throw new Exception("NÃO HÁ LIVROS DISPONÍVEIS");
 				}
+				
 				EmprestimoLivro emprestimo = new EmprestimoLivro(this, livrosReservados.get(0), LocalDate.now(),
 						LocalDate.now().plusDays(PRAZO_DEVOLUCAO));
 				livrosReservados.get(0).emprestarItem(this, emprestimo);
 			}
-			EmprestimoLivro emprestimo = new EmprestimoLivro(this, livrosEmprestar.get(0), LocalDate.now(),
+			
+			EmprestimoLivro emprestimo = new EmprestimoLivro(this, livros_livres.get(0), LocalDate.now(),
 					LocalDate.now().plusDays(PRAZO_DEVOLUCAO));
-			livrosEmprestar.get(0).emprestarItem(this, emprestimo);
+			livros_livres.get(0).emprestarItem(this, emprestimo);
 			listaEmprestimoAtivo.add(emprestimo);
+			
+			
 		} else {
 			EmprestimoLivro emprestimo = new EmprestimoLivro(this, reserva.getLivro(), LocalDate.now(),
 					LocalDate.now().plusDays(PRAZO_DEVOLUCAO));
@@ -79,6 +79,28 @@ public class Professor implements IUsuario, Observer {
 			listaEmprestimoAtivo.add(emprestimo);
 		}
 	}
+	
+	
+	
+	private List<ILivro> getLivrosLivresAndCodigo(String codigo) {
+
+		return Biblioteca.getInstanciaBiblioteca().getListaLivros().stream().filter(
+				livro -> livro.getStatus().equals(StatusEmprestimoLivro.Livre) && livro.getCodigoLivro().equals(codigo))
+				.toList();
+
+	}
+	
+	
+	private List<ILivro> getLivrosRevervadosAndCodigo(String codigo) {
+
+		return Biblioteca.getInstanciaBiblioteca().getListaLivros().stream().filter(
+				livro -> livro.getStatus().equals(StatusEmprestimoLivro.Reservado) && livro.getCodigoLivro().equals(codigo))
+				.toList();
+
+	}
+	
+	
+	
 
 	public void removerReservaAtiva(ILivro livro) {
 		listaReservaAtiva.removeIf(reserva -> reserva.getLivro().equals(livro));
@@ -90,7 +112,7 @@ public class Professor implements IUsuario, Observer {
 	}
 
 	public ReservaLivro obterReserva(String codigoLivro) {
-
+		
 		List<ReservaLivro> reservas = listaReservaAtiva.stream().filter(reserva -> reserva.getLivro().getCodigoLivro().equals(codigoLivro))
 				.toList();
 		if (reservas.size() > 0) {
@@ -182,6 +204,12 @@ public class Professor implements IUsuario, Observer {
 	@Override
 	public void update() {
 
+	}
+	
+	@Override
+	public String toString() {
+		
+		return super.toString();
 	}
 
 }

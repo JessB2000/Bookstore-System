@@ -3,10 +3,7 @@ package entidades;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
-
 import javax.lang.model.type.NullType;
-
 import interfaces.ILivro;
 import interfaces.IUsuario;
 import outros.Biblioteca;
@@ -38,35 +35,32 @@ public class AlunoGraduacao implements IUsuario {
 
 	@Override
 	public void pegarLivroEmprestado(String codigoLivro) throws Exception {
+
 		if (listaEmprestimoAtivo.size() >= LIMITE_EMPRESTIMO) {
 			throw new Exception("LIMITE DE EMPRESTIMO EXECIDO");
 		}
 		if (this.isDevedor()) {
 			throw new Exception("USUARIO ESTÁ EM DIVIDA COM A BIBLIOTECA");
 		}
-
-		if (this.listaEmprestimoAtivo.stream()
-				.anyMatch(emp -> emp.getLivro().getCodigoLivro().equals(codigoLivro))) {
+		if (this.listaEmprestimoAtivo.stream().anyMatch(emp -> emp.getLivro().getCodigoLivro().equals(codigoLivro))) {
 			throw new Exception("USUARIO JÁ POSSUI EMPRÉSTIMO DESSE LIVRO");
 		}
-		Biblioteca biblioteca = Biblioteca.getInstanciaBiblioteca();
-
-		List<ILivro> livros_livres_and_reservados = biblioteca.getListaLivros().stream()
-				.filter(liv -> (liv.getCodigoLivro().equals(codigoLivro))).toList();
-
-		Predicate<ILivro> Status_Livre = (l) -> l.getStatus().equals(StatusEmprestimoLivro.Livre);
 
 		ReservaLivro reserva = obterReserva(codigoLivro);
 
 		if (reserva == SEM_RESERVA) {
-			List<ILivro> livrosEmprestar = livros_livres_and_reservados.stream().filter(Status_Livre).toList();
 
-			if (livrosEmprestar.size() <= 0) {
+			List<ILivro> livros_livres = getLivrosLivresAndCodigo(codigoLivro);
+
+			if (livros_livres.size() <= 0) {
 				throw new Exception("NÃO HÁ LIVROS DISPONÍVEIS");
 			}
-			EmprestimoLivro emprestimo = new EmprestimoLivro(this, livrosEmprestar.get(0), LocalDate.now(),
+
+			ILivro livro = livros_livres.get(0);
+
+			EmprestimoLivro emprestimo = new EmprestimoLivro(this, livro, LocalDate.now(),
 					LocalDate.now().plusDays(PRAZO_DEVOLUCAO));
-			livrosEmprestar.get(0).emprestarItem(this, emprestimo);
+			livro.emprestarItem(this, emprestimo);
 			listaEmprestimoAtivo.add(emprestimo);
 		} else {
 			EmprestimoLivro emprestimo = new EmprestimoLivro(this, reserva.getLivro(), LocalDate.now(),
@@ -74,6 +68,14 @@ public class AlunoGraduacao implements IUsuario {
 			reserva.getLivro().emprestarItem(this, emprestimo);
 			listaEmprestimoAtivo.add(emprestimo);
 		}
+	}
+
+	private List<ILivro> getLivrosLivresAndCodigo(String codigo) {
+
+		return Biblioteca.getInstanciaBiblioteca().getListaLivros().stream().filter(
+				livro -> livro.getStatus().equals(StatusEmprestimoLivro.Livre) && livro.getCodigoLivro().equals(codigo))
+				.toList();
+
 	}
 
 	public void removerReservaAtiva(ILivro livro) {
@@ -87,8 +89,8 @@ public class AlunoGraduacao implements IUsuario {
 
 	public ReservaLivro obterReserva(String codigoLivro) {
 
-		List<ReservaLivro> reservas = listaReservaAtiva.stream().filter(reserva -> reserva.getLivro().getCodigoLivro().equals(codigoLivro))
-				.toList();
+		List<ReservaLivro> reservas = listaReservaAtiva.stream()
+				.filter(reserva -> reserva.getLivro().getCodigoLivro().equals(codigoLivro)).toList();
 		if (reservas.size() > 0) {
 			return reservas.get(0);
 		}
@@ -173,6 +175,5 @@ public class AlunoGraduacao implements IUsuario {
 	public String getCodigo() {
 		return codigo;
 	}
-
 
 }

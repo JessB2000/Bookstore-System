@@ -2,6 +2,8 @@ package entidades;
 
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import interfaces.ILivro;
@@ -24,16 +26,19 @@ public class Livro implements ILivro, Subject {
 	private EmprestimoLivro EmprestimoAtivo;
 	private StatusEmprestimoLivro status;
 	private IUsuario locatario;
+	private static int gerarCodigoExemplar =1;
 
-	public Livro(String codigo, String titulo, String autor, String edicao, String anopublicacao,
-		String codigoExemplar) {
+	public Livro(String codigo, String titulo, String autor, String edicao, String anopublicacao) {
 		this.codigo = codigo;
 		this.titulo = titulo;
 		this.autor = autor;
 		this.edicao = edicao;
 		this.anopublicacao = anopublicacao;
-		this.codigoExemplar = codigoExemplar;
+		this.gerarCodigoExemplar = this.gerarCodigoExemplar++;
+		this.codigoExemplar = String.valueOf(gerarCodigoExemplar);
 		this.status = StatusEmprestimoLivro.Livre; 
+		this.listaReserva = new ArrayList<>();
+		this.listaEmprestimo = new ArrayList<>();
 	}
     
 	@Override
@@ -112,14 +117,20 @@ public class Livro implements ILivro, Subject {
 
 	@Override
 	public void emprestarItem(IUsuario usuario, EmprestimoLivro emprestimo) {
-		this.status = StatusEmprestimoLivro.Emprestado;		
-		if(reservaAtiva.getUsuario().equals(usuario)) {
-			usuario.adicionarReservaHistorico(this.reservaAtiva);
+		this.status = StatusEmprestimoLivro.Emprestado;	
+		
+		if(reservaAtiva!= null && reservaAtiva.getUsuario().equals(usuario)) {
+		
+			if(this.reservaAtiva!= null) {
+				usuario.adicionarReservaHistorico(this.reservaAtiva);
+			}
+		
 			usuario.removerReservaAtiva(this);
 			this.locatario = usuario; 
 			this.EmprestimoAtivo = emprestimo; 
 		}else if(reservaAtiva == null || !reservaAtiva.getUsuario().equals(usuario)) {
-			reservaAtiva.getUsuario().removerReservaAtiva(this);
+			
+		
 			this.locatario = usuario; 
 			this.EmprestimoAtivo = emprestimo;
 		}
@@ -151,6 +162,43 @@ public class Livro implements ILivro, Subject {
 		return reservaAtiva;
 	}
 
+	
+	
+	@Override
+	public String toString() {
+		
+		String reservaView = "";
+		String emprestimoView = "";
+		if(this.listaReserva.size()<=0) {
+			reservaView = "SEM RESERVA";
+		}else {
+			for(int i=0; i< this.listaReserva.size();i++) {
+				reservaView.concat("\n"+this.listaReserva.get(i).getUsuario().getNome());
+			}
+		}
+		
+		if(this.reservaAtiva!=null) {
+			reservaView.concat("\n"+this.reservaAtiva.getUsuario().getNome());
+		}
+		
+		if(this.EmprestimoAtivo!=null) {
+			emprestimoView.concat("\nEmprestimo Ativo:  || Usuario: "+this.EmprestimoAtivo.getUsuario().getNome()+
+					"   || Data Emprestimo: "+this.EmprestimoAtivo.getDataEmprestimo()+
+					"   || Data Devolução: "+this.EmprestimoAtivo.getDataDevolucaoPrevista());
+		}
+		
+		
+		
+		String usuarioView = 
+				"\n------------------------------------------------------"
+				+ " \nCodigo Exemplar: "+this.codigoExemplar+
+				"\nTitulo: "+this.titulo+
+				"\nQt. Reservas: "+reservaView+
+				"\nStatus: "+this.status+
+				emprestimoView;
+		
+		return usuarioView;
+	}
 	
 
 }

@@ -41,6 +41,7 @@ public class Biblioteca {
 	}
 
 	public void executar(String[] args) throws Exception {
+		
 		this.comandos.get(args[0]).execute(args);
 	}
 	public List <IUsuario> getListaUsuarios(){
