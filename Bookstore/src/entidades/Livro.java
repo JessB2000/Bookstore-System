@@ -180,17 +180,8 @@ public class Livro implements ILivro, Subject {
 
 		String reservaView = "";
 		String emprestimoView = "";
-
-		if (this.listaReserva.size() <= 0) {
-			reservaView = "SEM RESERVA";
-		} else {
-			for (int i = 0; i < this.listaReserva.size(); i++) {
-				reservaView = reservaView.concat("\n" + this.listaReserva.get(i).getUsuario().getNome());
-			}
-		}
-
 		if (this.reservaAtiva != null) {
-			reservaView = reservaView.concat("\n" + this.reservaAtiva.getUsuario().getNome());
+			reservaView =  reservaView.concat("\nReserva Ativa:" + this.reservaAtiva.getUsuario().getNome());
 		}
 
 		if (this.EmprestimoAtivo != null) {
@@ -201,8 +192,11 @@ public class Livro implements ILivro, Subject {
 		}
 
 		String usuarioView = "\n------------------------------------------------------" + " \nCodigo Exemplar: "
-				+ this.codigoExemplar + "\nTitulo: " + this.titulo + "\nQt. Reservas: " + reservaView + "\nStatus: "
-				+ this.status + emprestimoView;
+				+ this.codigoExemplar +
+				"\nTitulo: " +this.titulo 
+				+ reservaView + 
+				"\nStatus: "+ this.status + 
+				emprestimoView;
 
 		return usuarioView;
 	}

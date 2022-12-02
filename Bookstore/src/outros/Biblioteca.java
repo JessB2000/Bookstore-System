@@ -73,6 +73,8 @@ public class Biblioteca {
 				throw new Exception("NÃO FOI POSSÍVEL OBTER O LIVRO -> Livro não existe ");
 			} else {
 				livros.forEach(livro -> System.out.println(livro.toString()));
+				System.out.println("\n ---------------------------------------- \nQt. Reservas: "+livros.stream()
+				.filter(liv ->liv.getStatus().equals(StatusEmprestimoLivro.Reservado)).toList().size());
 			}
 
 		} catch (Exception e) {
