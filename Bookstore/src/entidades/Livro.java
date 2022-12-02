@@ -115,16 +115,18 @@ public class Livro implements ILivro, Subject {
 	public void reservarItem(IUsuario usuario, ReservaLivro reserva) {
 		this.reservaAtiva = reserva; 
 		this.status = StatusEmprestimoLivro.Reservado; 
-		Biblioteca.getInstanciaBiblioteca().getListaLivros().forEach(liv -> System.out.println(liv.toString()));
 		if (getListaLivroReservadoComCodigo(this).size() > LIMITE_RESERVAS_SIMULTANEAS_OBSERVER) {
 			System.out.println("entrou");
 		}
 	}
 	
     private List <ILivro>  getListaLivroReservadoComCodigo (ILivro livro) {
-    	return Biblioteca.getInstanciaBiblioteca().getListaLivros().stream().filter(liv -> liv.getCodigoLivro()
-				.equals(this.getCodigoLivro()) && livro.getStatus().equals(StatusEmprestimoLivro.Reservado)).toList();
-    }
+    	
+    	
+    	return Biblioteca.getInstanciaBiblioteca()
+    			.getListaLivros().stream().filter(liv ->liv.getCodigoLivro()
+				.equals(this.getCodigoLivro())).filter(l -> l.getStatus().equals(StatusEmprestimoLivro.Reservado)).toList();
+    			}
 	@Override
 	public void emprestarItem(IUsuario usuario, EmprestimoLivro emprestimo) {
 		this.status = StatusEmprestimoLivro.Emprestado;

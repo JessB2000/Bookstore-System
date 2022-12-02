@@ -90,12 +90,17 @@ public class Professor implements IUsuario, Observer {
 		if (reserva == SEM_RESERVA) {
 
 			List<ILivro> livros_livres = getLivrosLivresAndCodigo(codigoLivro);
-
-			if (livros_livres.size() <= 0) {
-				throw new Exception("NÃO HÁ LIVROS DISPONÍVEIS");
+			if (livros_livres.size() > 0) {
+				addEmprestimo(livros_livres.get(0));
+				return;
 			}
 
-			addEmprestimo(livros_livres.get(0));
+			List<ILivro> livros_reservados = getLivrosReservadosAndCogido(codigoLivro);
+			if (livros_reservados.size() > 0) {
+				addEmprestimo(livros_reservados.get(0));
+			}
+
+			throw new Exception("NÃO HÁ LIVROS DISPONÍVEIS");
 
 		} else {
 			addEmprestimo(reserva.getLivro());
@@ -123,7 +128,7 @@ public class Professor implements IUsuario, Observer {
 			return;
 		}
 
-			throw new Exception("NÃO HÁ EXEMPLARES DISPONÍVEIS!");
+		throw new Exception("NÃO HÁ EXEMPLARES DISPONÍVEIS!");
 
 	}
 
@@ -182,18 +187,17 @@ public class Professor implements IUsuario, Observer {
 
 	private List<ILivro> getLivrosLivresAndCodigo(String codigo) {
 
-		return Biblioteca.getInstanciaBiblioteca().getListaLivros().stream().filter(
-				livro -> livro.getStatus().equals(StatusEmprestimoLivro.Livre) && livro.getCodigoLivro().equals(codigo))
-				.toList();
+		return Biblioteca.getInstanciaBiblioteca().getListaLivros().stream()
+				.filter(l -> l.getStatus().equals(StatusEmprestimoLivro.Livre))
+				.filter(livro -> livro.getCodigoLivro().equals(codigo)).toList();
 
 	}
 
 	private List<ILivro> getLivrosReservadosAndCogido(String codigo) {
 
 		return Biblioteca.getInstanciaBiblioteca().getListaLivros().stream()
-				.filter(livro -> livro.getStatus().equals(StatusEmprestimoLivro.Reservado)
-						&& livro.getCodigoLivro().equals(codigo))
-				.toList();
+				.filter(l -> l.getStatus().equals(StatusEmprestimoLivro.Reservado))
+				.filter(livro -> livro.getCodigoLivro().equals(codigo)).toList();
 
 	}
 

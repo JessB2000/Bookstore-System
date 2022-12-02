@@ -188,7 +188,7 @@ public class AlunoPosGraduacao implements IUsuario {
 	private List<ILivro> getLivrosLivresAndCodigo(String codigo) {
 
 		return Biblioteca.getInstanciaBiblioteca().getListaLivros().stream().filter(
-				livro -> livro.getStatus().equals(StatusEmprestimoLivro.Livre) && livro.getCodigoLivro().equals(codigo))
+				l -> l.getStatus().equals(StatusEmprestimoLivro.Livre)).filter(livro ->livro.getCodigoLivro().equals(codigo))
 				.toList();
 
 	}
