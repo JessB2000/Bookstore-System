@@ -115,8 +115,14 @@ public class Biblioteca {
 	}
 
 	public void addObserver(String codigoUsuario, String codigoLivro) {
+		
 		Observer observador = (Observer) obterUsuario(codigoUsuario);
-
+		
+			this.listaLivros.forEach(liv -> {
+				Subject livro = (Subject) liv;
+				livro.addObserver(observador);
+			});
 	}
+	
 
 }
