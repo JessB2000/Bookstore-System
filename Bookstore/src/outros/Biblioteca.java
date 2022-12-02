@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import comand.AdicionarObservadorCommand;
 import comand.Command;
@@ -14,6 +15,7 @@ import comand.PegarLivroEmprestadoCommand;
 import comand.ReservarLivroCommand;
 import interfaces.ILivro;
 import interfaces.IUsuario;
+import interfaces.Observer;
 
 public class Biblioteca {
 	private List<IUsuario> listaUsuarios;
@@ -55,8 +57,8 @@ public class Biblioteca {
 	public void consultarUsuario(String codigoUsuario) {
 
 		try {
-			this.getListaUsuarios().stream().filter(user -> user.getCodigo().equals(codigoUsuario)).toList().get(0)
-					.toString();
+
+			obterUsuario(codigoUsuario).toString();
 		} catch (Exception e) {
 			System.out.println("NÃO FOI POSSÍVEL OBTER O USUARIO -> " + e.getMessage());
 		}
@@ -81,8 +83,7 @@ public class Biblioteca {
 
 	public void pegarLivroEmprestado(String codigoUsuario, String codigoLivro) {
 		try {
-			this.getListaUsuarios().stream().filter(user -> user.getCodigo().equals(codigoUsuario)).toList().get(0)
-					.pegarLivroEmprestado(codigoLivro);
+			obterUsuario(codigoUsuario).pegarLivroEmprestado(codigoLivro);
 			System.out.println("EMPRESTIMO REALIZADO COM SUCESSO!");
 		} catch (Exception e) {
 			System.out.println("NÃO FOI POSSÍVEL PEGAR O LIVRO -> " + e.getMessage());
@@ -91,8 +92,7 @@ public class Biblioteca {
 
 	public void reservarLivro(String codigoUsuario, String codigoLivro) {
 		try {
-			this.getListaUsuarios().stream().filter(user -> user.getCodigo().equals(codigoUsuario)).toList().get(0)
-					.reservarLivro(null);
+			obterUsuario(codigoUsuario).reservarLivro(codigoLivro);
 			System.out.println("RESERVA REALIZADA COM SUCESSO!");
 		} catch (Exception e) {
 			System.out.println("NÃO FOI POSSÍVEL PEGAR O LIVRO -> " + e.getMessage());
@@ -101,14 +101,20 @@ public class Biblioteca {
 
 	public void devovlerLivro(String codigoUsuario, String codigoLivro) {
 		try {
-		this.listaUsuarios
-			 .stream().filter(user -> user.getCodigo()
-				.equals(codigoUsuario)).toList().get(0)
-				.devolverLivro(codigoLivro);
-		System.out.println("LIVRO DEVOLVIDO COM SUCESSO!");
+			obterUsuario(codigoUsuario).devolverLivro(codigoLivro);
+			System.out.println("LIVRO DEVOLVIDO COM SUCESSO!");
 		} catch (Exception e) {
-			System.out.println("NÃO FOI POSSÍVEL DEVOLVER O LIVRO -> " + e.getMessage()); 
-		} 
+			System.out.println("NÃO FOI POSSÍVEL DEVOLVER O LIVRO -> " + e.getMessage());
+		}
+	}
+
+	private IUsuario obterUsuario(String codigoUsuario) {
+		return this.listaUsuarios.stream().filter(user -> user.getCodigo().equals(codigoUsuario)).toList().get(0);
+	}
+
+	public void addObserver(String codigoUsuario, String codigoLivro) {
+		Observer observador = (Observer) obterUsuario(codigoUsuario);
+
 	}
 
 }

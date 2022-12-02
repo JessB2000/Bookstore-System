@@ -9,9 +9,9 @@ import javax.lang.model.type.NullType;
 
 import interfaces.ILivro;
 import interfaces.IUsuario;
+import interfaces.Observer;
 import outros.Biblioteca;
 import outros.EmprestimoLivro;
-import outros.Observer;
 import outros.ReservaLivro;
 import outros.StatusEmprestimoLivro;
 
@@ -123,12 +123,7 @@ public class Professor implements IUsuario, Observer {
 			return;
 		}
 
-		List<ILivro> livros_reservados = getLivrosReservadosAndCogido(Codigolivro);
-		if (livros_reservados.size() > 0) {
-			addReserva(livros_reservados.get(0));
-		} else {
 			throw new Exception("NÃO HÁ EXEMPLARES DISPONÍVEIS!");
-		}
 
 	}
 
@@ -208,9 +203,9 @@ public class Professor implements IUsuario, Observer {
 	}
 
 	@Override
-	public void update() {
-		// TODO Auto-generated method stub
-
+	public void update(ILivro livro) {
+		System.out.println("HÁ MAIS DE DOIS EXEMPLARES RESERVADOS DO LIVRO: || NOME: " + livro.getTitulo()
+				+ "|| CÓDIGO: " + livro.getCodigoLivro());
 	}
 
 }

@@ -32,10 +32,9 @@ public class AlunoGraduacao implements IUsuario {
 		this.listaEmprestimoAtivo = new ArrayList<>();
 
 	}
-	
-	
+
 	//// ----------- GETTES E SETTERS
-	
+
 	@Override
 	public String getNome() {
 		return nome;
@@ -45,35 +44,31 @@ public class AlunoGraduacao implements IUsuario {
 	public String getCodigo() {
 		return codigo;
 	}
-	
+
 	@Override
 	public List<EmprestimoLivro> getEmprestimosHistorico() {
-		
+
 		return this.listaEmprestimo;
 	}
 
-
 	@Override
 	public List<ReservaLivro> getReservasHistorico() {
-	
+
 		return this.listaReservaHistorico;
 	}
 
-
 	@Override
 	public List<EmprestimoLivro> getEmprestimosAtivos() {
-		
+
 		return this.listaEmprestimoAtivo;
 	}
 
-
 	@Override
 	public List<ReservaLivro> getReservasAtivas() {
-		
+
 		return this.listaReservaAtiva;
 	}
 
-	
 	///// FUNÇÕES PRINCIPAIS
 
 	@Override
@@ -138,11 +133,11 @@ public class AlunoGraduacao implements IUsuario {
 		listaEmprestimoAtivo.remove(emprestimo);
 		emprestimo.getLivro().devolverItem(this, emprestimo.getLivro(), emprestimo);
 	}
-	
+
 	public void removerReservaAtiva(ILivro livro) {
 		listaReservaAtiva.removeIf(reserva -> reserva.getLivro().equals(livro));
 	}
-	
+
 	public void adicionarReservaHistorico(ReservaLivro reserva) {
 		reserva.setIsAtivo(false);
 		listaReservaHistorico.add(reserva);
@@ -195,9 +190,5 @@ public class AlunoGraduacao implements IUsuario {
 		return this.listaEmprestimoAtivo.stream()
 				.anyMatch(emprestimo -> emprestimo.getDataDevolucaoPrevista().isBefore(LocalDate.now()));
 	}
-
-
-	
-	
 
 }
