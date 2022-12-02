@@ -208,6 +208,7 @@ public class Professor implements IUsuario, Observer {
 
 	@Override
 	public void update(ILivro livro) {
+		System.out.println("chemout");
 		System.out.println("HÁ MAIS DE DOIS EXEMPLARES RESERVADOS DO LIVRO: || NOME: " + livro.getTitulo()
 				+ "|| CÓDIGO: " + livro.getCodigoLivro());
 	}

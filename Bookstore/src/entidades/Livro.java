@@ -116,7 +116,7 @@ public class Livro implements ILivro, Subject {
 		this.reservaAtiva = reserva; 
 		this.status = StatusEmprestimoLivro.Reservado; 
 		if (getListaLivroReservadoComCodigo(this).size() > LIMITE_RESERVAS_SIMULTANEAS_OBSERVER) {
-			System.out.println("entrou");
+			notifyObserver(this);
 		}
 	}
 	
