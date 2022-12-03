@@ -21,7 +21,7 @@ public class Livro implements ILivro, Subject {
 	private String autor;
 	private String edicao;
 	private String anopublicacao;
-	private int LIMITE_RESERVAS_SIMULTANEAS_OBSERVER = 1; 
+	private int LIMITE_RESERVAS_SIMULTANEAS_OBSERVER = 1;
 	private List<ReservaLivro> listaReserva;
 	private ReservaLivro reservaAtiva;
 	private List<EmprestimoLivro> listaEmprestimo;
@@ -113,20 +113,20 @@ public class Livro implements ILivro, Subject {
 
 	@Override
 	public void reservarItem(IUsuario usuario, ReservaLivro reserva) {
-		this.reservaAtiva = reserva; 
-		this.status = StatusEmprestimoLivro.Reservado; 
+		this.reservaAtiva = reserva;
+		this.status = StatusEmprestimoLivro.Reservado;
 		if (getListaLivroReservadoComCodigo(this).size() > LIMITE_RESERVAS_SIMULTANEAS_OBSERVER) {
 			notifyObserver(this);
 		}
 	}
-	
-    private List <ILivro>  getListaLivroReservadoComCodigo (ILivro livro) {
-    	
-    	
-    	return Biblioteca.getInstanciaBiblioteca()
-    			.getListaLivros().stream().filter(liv ->liv.getCodigoLivro()
-				.equals(this.getCodigoLivro())).filter(l -> l.getStatus().equals(StatusEmprestimoLivro.Reservado)).toList();
-    			}
+
+	private List<ILivro> getListaLivroReservadoComCodigo(ILivro livro) {
+
+		return Biblioteca.getInstanciaBiblioteca().getListaLivros().stream()
+				.filter(liv -> liv.getCodigoLivro().equals(this.getCodigoLivro()))
+				.filter(l -> l.getStatus().equals(StatusEmprestimoLivro.Reservado)).toList();
+	}
+
 	@Override
 	public void emprestarItem(IUsuario usuario, EmprestimoLivro emprestimo) {
 		this.status = StatusEmprestimoLivro.Emprestado;
@@ -146,9 +146,12 @@ public class Livro implements ILivro, Subject {
 			this.EmprestimoAtivo = emprestimo;
 		}
 	}
+
 	@Override
-	public boolean equals(Object obj) { /* serve para relacionar o código do livro com o código do exemplar, 
-	só podemos identificar que o livro é o mesmo se ele for igual ao código do exemplar */
+	public boolean equals(Object obj) { /*
+										 * serve para relacionar o código do livro com o código do exemplar, só podemos
+										 * identificar que o livro é o mesmo se ele for igual ao código do exemplar
+										 */
 
 		if (this == obj) {
 			return true;
@@ -174,14 +177,14 @@ public class Livro implements ILivro, Subject {
 	}
 
 	@Override
-	public String toString() { 
-		
+	public String toString() {
+
 		/* cria um padrão para a impressão dos dados */
 
 		String reservaView = "";
 		String emprestimoView = "";
 		if (this.reservaAtiva != null) {
-			reservaView =  reservaView.concat("\nReserva Ativa:" + this.reservaAtiva.getUsuario().getNome());
+			reservaView = reservaView.concat("\nReserva Ativa:" + this.reservaAtiva.getUsuario().getNome());
 		}
 
 		if (this.EmprestimoAtivo != null) {
@@ -192,11 +195,8 @@ public class Livro implements ILivro, Subject {
 		}
 
 		String usuarioView = "\n------------------------------------------------------" + " \nCodigo Exemplar: "
-				+ this.codigoExemplar +
-				"\nTitulo: " +this.titulo 
-				+ reservaView + 
-				"\nStatus: "+ this.status + 
-				emprestimoView;
+				+ this.codigoExemplar + "\nTitulo: " + this.titulo + reservaView + "\nStatus: " + this.status
+				+ emprestimoView;
 
 		return usuarioView;
 	}

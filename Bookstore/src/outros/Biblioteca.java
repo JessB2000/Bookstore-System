@@ -11,6 +11,7 @@ import comand.Command;
 import comand.ConsultarLivroCommand;
 import comand.ConsultarUsuarioCommand;
 import comand.DevolverLivroCommand;
+import comand.NotificacoesCommand;
 import comand.PegarLivroEmprestadoCommand;
 import comand.ReservarLivroCommand;
 import interfaces.ILivro;
@@ -33,6 +34,7 @@ public class Biblioteca {
 		this.comandos.put("emp", new PegarLivroEmprestadoCommand());
 		this.comandos.put("usu", new ConsultarUsuarioCommand());
 		this.comandos.put("obs", new AdicionarObservadorCommand());
+		this.comandos.put("ntf", new NotificacoesCommand());
 	}
 
 	public static Biblioteca getInstanciaBiblioteca() {
@@ -55,10 +57,8 @@ public class Biblioteca {
 	}
 
 	public void consultarUsuario(String codigoUsuario) {
-
 		try {
-
-			obterUsuario(codigoUsuario).toString();
+			System.out.println(obterUsuario(codigoUsuario).toString());
 		} catch (Exception e) {
 			System.out.println("NÃO FOI POSSÍVEL OBTER O USUARIO -> " + e.getMessage());
 		}
@@ -109,7 +109,10 @@ public class Biblioteca {
 			System.out.println("NÃO FOI POSSÍVEL DEVOLVER O LIVRO -> " + e.getMessage());
 		}
 	}
-
+   public void consultarNotificacoes(String codigoUsuario) {
+	   Observer observador = (Observer) obterUsuario(codigoUsuario);
+	   System.out.printf("QUANTIDADE DE NOTIFICAÇÕES: %d", observador.getQtNotificacoes()); 
+   }
 	private IUsuario obterUsuario(String codigoUsuario) {
 		return this.listaUsuarios.stream().filter(user -> user.getCodigo().equals(codigoUsuario)).toList().get(0);
 	}
@@ -123,6 +126,4 @@ public class Biblioteca {
 				livro.addObserver(observador);
 			});
 	}
-	
-
 }

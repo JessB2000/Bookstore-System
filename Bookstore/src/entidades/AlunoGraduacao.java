@@ -180,15 +180,49 @@ public class AlunoGraduacao implements IUsuario {
 
 	private List<ILivro> getLivrosLivresAndCodigo(String codigo) {
 
-		return Biblioteca.getInstanciaBiblioteca().getListaLivros().stream().filter(
-				l -> l.getStatus().equals(StatusEmprestimoLivro.Livre)).filter(livro -> livro.getCodigoLivro().equals(codigo))
-				.toList();
+		return Biblioteca.getInstanciaBiblioteca().getListaLivros().stream()
+				.filter(l -> l.getStatus().equals(StatusEmprestimoLivro.Livre))
+				.filter(livro -> livro.getCodigoLivro().equals(codigo)).toList();
 
 	}
 
 	private boolean isDevedor() {
 		return this.listaEmprestimoAtivo.stream()
 				.anyMatch(emprestimo -> emprestimo.getDataDevolucaoPrevista().isBefore(LocalDate.now()));
+	}
+
+	@Override
+	public String toString() {
+		String listaEmprestimosCorrentes = "\nEMPRÉSTIMOS CORRENTES: \n----------------------------------\n";
+		String listaEmprestimosHistorico = "\nHISTÓRICO DE EMPRÉSTIMOS: \n----------------------------------\n";
+		String listaReservas = "\nRESERVAS: \n----------------------------------\n";
+		int i = 0;
+		for (i = 0; i < this.listaEmprestimoAtivo.size(); i++) {
+			listaEmprestimosCorrentes = listaEmprestimosCorrentes
+					.concat("\n || TÍTULO DO LIVRO: " + this.listaEmprestimoAtivo.get(i).getLivro().getTitulo()
+							+ " || DATA DO EMPRÉSTIMO: " + this.listaEmprestimoAtivo.get(i).getDataEmprestimo()
+							+ " || STATUS DO EMPRÉSTIMO: Em curso" + " || DATA DA DEVOLUÇÃO PREVISTA: "
+							+ this.listaEmprestimoAtivo.get(i).getDataDevolucaoPrevista().toString());
+		}
+		
+		for (i = 0; i < this.listaEmprestimo.size(); i++) {
+			listaEmprestimosHistorico = listaEmprestimosHistorico
+					.concat("\n || TÍTULO DO LIVRO: " + this.listaEmprestimo.get(i).getLivro().getTitulo()
+							+ " || DATA DO EMPRÉSTIMO: " + this.listaEmprestimo.get(i).getDataEmprestimo()
+							+ " || STATUS DO EMPRÉSTIMO: Finalizado" + " || DATA DA DEVOLUÇÃO: "
+							+ this.listaEmprestimo.get(i).getDataDevolucaoReal().toString());
+		}
+		for (i = 0; i < this.listaReservaAtiva.size(); i++) {
+			listaReservas = listaReservas
+					.concat("\n || TÍTULO DO LIVRO: " + this.listaReservaAtiva.get(i).getLivro().getTitulo()
+							+ " || DATA DA SOLICITAÇÃO DA RESERVA: " + this.listaReservaAtiva.get(i).getData());
+		}
+		for (i = 0; i < this.listaReservaHistorico.size(); i++) {
+			listaReservas = listaReservas
+					.concat("\n || TÍTULO DO LIVRO: " + this.listaReservaHistorico.get(i).getLivro().getTitulo()
+							+ " || DATA DA SOLICITAÇÃO DA RESERVA: " + this.listaReservaHistorico.get(i).getData());
+		}
+		return listaEmprestimosCorrentes + listaEmprestimosHistorico + listaReservas; 
 	}
 
 }
